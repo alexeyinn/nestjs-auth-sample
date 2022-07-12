@@ -32,7 +32,7 @@ export class AuthService {
     });
 
     if (!user)
-      throw new ForbiddenException("User with this email is not exist");
+      throw new ForbiddenException("User with this email is not exist!");
 
     const passwordMatches = await bcrypt.compare(dto.password, user.hash);
     if (!passwordMatches) throw new ForbiddenException("Wrong password!");
@@ -56,7 +56,23 @@ export class AuthService {
     });
   }
 
-  refreshTokens() {}
+  async refreshTokens(userId: number, rt: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user || !user.hashedRt)
+      throw new ForbiddenException("User with this email is not exist!");
+
+    const rtMatches = await bcrypt.compare(rt, user.hashedRt);
+    if (!rtMatches) throw new ForbiddenException("Access denied!");
+
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+    return tokens;
+  }
 
   private async getTokens(userId: number, email: string): Promise<Tokens> {
     const [at, rt] = await Promise.all([

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Tokens } from "./types/tokens.type";
@@ -24,7 +24,24 @@ export class AuthService {
     return tokens;
   }
 
-  sighinLocal() {}
+  async sighinLocal(dto: AuthDto): Promise<Tokens> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    if (!user)
+      throw new ForbiddenException("User with this email is not exist");
+
+    const passwordMatches = await bcrypt.compare(dto.password, user.hash);
+    if (!passwordMatches) throw new ForbiddenException("Wrong password!");
+
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+    return tokens;
+  }
+
   logout() {}
   refreshTokens() {}
 

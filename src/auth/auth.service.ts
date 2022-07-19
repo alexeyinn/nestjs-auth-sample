@@ -64,6 +64,7 @@ export class AuthService {
         hashedRt: null,
       },
     });
+    return true;
   }
 
   async refreshTokens(userId: number, rt: string) {

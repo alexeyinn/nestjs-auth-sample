@@ -4,6 +4,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { Tokens } from "./types/tokens.type";
 import * as bcrypt from "bcrypt";
 import { AuthDto } from "./dto";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 @Injectable()
 export class AuthService {
@@ -12,12 +13,21 @@ export class AuthService {
   async sighupLocal(dto: AuthDto): Promise<Tokens> {
     const hash = await this.hashData(dto.password);
 
-    const newUser = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        hash,
-      },
-    });
+    const newUser = await this.prisma.user
+      .create({
+        data: {
+          email: dto.email,
+          hash,
+        },
+      })
+      .catch((error) => {
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code === "P2002") {
+            throw new ForbiddenException("Credentials incorrect");
+          }
+        }
+        throw error;
+      });
 
     const tokens = await this.getTokens(newUser.id, newUser.email);
     await this.updateRtHash(newUser.id, tokens.refresh_token);

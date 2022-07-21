@@ -44,16 +44,16 @@ export class AuthController {
     return this.authService.logout(userId);
   }
 
-  // @Public()
-  // @UseGuards(RtGuard)
-  // @Post("refresh")
-  // @ApiCreatedResponse({ type: Tokens })
-  // @ApiHeader({ name: "Authorization", description: "Refresh token" })
-  // @HttpCode(HttpStatus.OK)
-  // refreshTokens(
-  //   @GetCurrentUserId() userId: number,
-  //   @GetCurrentUser("refreshToken") refreshToken: string
-  // ): Promise<Tokens> {
-  //   return this.authService.refreshTokens(userId, refreshToken);
-  // }
+  @Public()
+  @UseGuards(RtGuard)
+  @Post("refresh")
+  @ApiCreatedResponse({ type: Tokens })
+  @ApiHeader({ name: "Authorization", description: "Refresh token" })
+  @HttpCode(HttpStatus.OK)
+  refreshTokens(
+    @GetCurrentUserId() userId: number,
+    @GetCurrentUser("refreshToken") refreshToken: string
+  ): Promise<Tokens> {
+    return this.authService.refreshTokens(userId, refreshToken);
+  }
 }

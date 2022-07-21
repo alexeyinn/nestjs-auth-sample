@@ -2,10 +2,23 @@ import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { AuthModule } from "./modules/auth/auth.module";
 import { AtGuard } from "./common/guards";
-import { PrismaModule } from "./prisma/prisma.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { UsersEntity } from "./modules/auth/entities";
 
 @Module({
-  imports: [AuthModule, PrismaModule],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: "postgres",
+      host: "localhost",
+      port: 5432,
+      username: "postgres",
+      password: "admin",
+      database: "tokens",
+      entities: [UsersEntity],
+      synchronize: true,
+    }),
+    AuthModule,
+  ],
   providers: [
     {
       provide: APP_GUARD,

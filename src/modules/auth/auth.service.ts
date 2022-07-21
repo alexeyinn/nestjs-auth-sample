@@ -1,9 +1,4 @@
-import {
-  ForbiddenException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Tokens } from "./types/tokens.type";
 import * as bcrypt from "bcrypt";
@@ -52,20 +47,10 @@ export class AuthService {
     return tokens;
   }
 
-  // async logout(userId: number): Promise<boolean> {
-  //   await this.prisma.user.updateMany({
-  //     where: {
-  //       id: userId,
-  //       hashedRt: {
-  //         not: null,
-  //       },
-  //     },
-  //     data: {
-  //       hashedRt: null,
-  //     },
-  //   });
-  //   return true;
-  // }
+  async logout(userId: number): Promise<boolean> {
+    await this.userRepository.save({ id: userId, hashedRt: null });
+    return true;
+  }
 
   // async refreshTokens(userId: number, rt: string) {
   //   const user = await this.prisma.user.findUnique({

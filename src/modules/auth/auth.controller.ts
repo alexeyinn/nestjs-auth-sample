@@ -35,14 +35,14 @@ export class AuthController {
     return this.authService.sighinLocal(dto);
   }
 
-  // @UseGuards(AtGuard)
-  // @Post("logout")
-  // @ApiCreatedResponse({ description: "true" })
-  // @ApiHeader({ name: "Authorization", description: "Access token" })
-  // @HttpCode(HttpStatus.OK)
-  // logout(@GetCurrentUserId() userId: number): Promise<boolean> {
-  //   return this.authService.logout(userId);
-  // }
+  @UseGuards(AtGuard)
+  @Post("logout")
+  @ApiCreatedResponse({ description: "true" })
+  @ApiHeader({ name: "Authorization", description: "Access token" })
+  @HttpCode(HttpStatus.OK)
+  logout(@GetCurrentUserId() userId: number): Promise<boolean> {
+    return this.authService.logout(userId);
+  }
 
   // @Public()
   // @UseGuards(RtGuard)

@@ -18,13 +18,13 @@ import { Tokens } from "./types/tokens.type";
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // @Public()
-  // @Post("local/signup")
-  // @ApiCreatedResponse({ type: Tokens })
-  // @HttpCode(HttpStatus.CREATED)
-  // sighupLocal(@Body() dto: AuthDto): Promise<Tokens> {
-  //   return this.authService.sighupLocal(dto);
-  // }
+  @Public()
+  @Post("local/signup")
+  @ApiCreatedResponse({ type: Tokens })
+  @HttpCode(HttpStatus.CREATED)
+  sighupLocal(@Body() dto: AuthDto): Promise<Tokens> {
+    return this.authService.sighupLocal(dto);
+  }
 
   // @Public()
   // @Post("local/signin")

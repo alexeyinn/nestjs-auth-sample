@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("users")
-export class UsersEntity {
+export class UserEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,7 +15,7 @@ export class UsersEntity {
   @ApiProperty()
   hash: string;
 
-  @Column()
+  @Column({ nullable: true })
   @ApiProperty()
   hashedRt: string;
 }

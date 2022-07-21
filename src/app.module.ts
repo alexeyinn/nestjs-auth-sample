@@ -3,7 +3,7 @@ import { APP_GUARD } from "@nestjs/core";
 import { AuthModule } from "./modules/auth/auth.module";
 import { AtGuard } from "./common/guards";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UsersEntity } from "./modules/auth/entities";
+import { UserEntity } from "./modules/auth/entities";
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { UsersEntity } from "./modules/auth/entities";
       username: "postgres",
       password: "admin",
       database: "tokens",
-      entities: [UsersEntity],
+      entities: [UserEntity],
       synchronize: true,
     }),
     AuthModule,

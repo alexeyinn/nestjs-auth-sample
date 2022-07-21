@@ -1,44 +1,39 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { PrismaService } from "src/prisma/prisma.service";
 import { Tokens } from "./types/tokens.type";
 import * as bcrypt from "bcrypt";
 import { AuthDto } from "./dto";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { InjectRepository } from "@nestjs/typeorm";
+import { UserEntity } from "./entities";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    private jwtService: JwtService
+  ) {}
 
   async sighupLocal(dto: AuthDto): Promise<Tokens> {
     const hash = await this.hashData(dto.password);
 
-    const newUser = await this.prisma.user
-      .create({
-        data: {
-          email: dto.email,
-          hash,
-        },
-      })
-      .catch((error) => {
-        if (error instanceof PrismaClientKnownRequestError) {
-          if (error.code === "P2002") {
-            throw new ForbiddenException("Credentials incorrect");
-          }
-        }
-        throw error;
-      });
+    let newUser;
+    try {
+      newUser = await this.userRepository.save({ ...dto, hash });
+    } catch {
+      throw new ForbiddenException("This email is already taken!");
+    }
 
     const tokens = await this.getTokens(newUser.id, newUser.email);
     await this.updateRtHash(newUser.id, tokens.refresh_token);
+
     return tokens;
   }
 
   async sighinLocal(dto: AuthDto): Promise<Tokens> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        email: dto.email,
-      },
+    const user = await this.userRepository.findOne({
+      where: { email: dto.email },
     });
 
     if (!user)
@@ -53,22 +48,12 @@ export class AuthService {
   }
 
   async logout(userId: number): Promise<boolean> {
-    await this.prisma.user.updateMany({
-      where: {
-        id: userId,
-        hashedRt: {
-          not: null,
-        },
-      },
-      data: {
-        hashedRt: null,
-      },
-    });
+    await this.userRepository.save({ id: userId, hashedRt: null });
     return true;
   }
 
   async refreshTokens(userId: number, rt: string) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.userRepository.findOne({
       where: {
         id: userId,
       },
@@ -113,18 +98,11 @@ export class AuthService {
   }
 
   private hashData(data: string) {
-    return bcrypt.hash(data, 10);
+    return bcrypt.hash(data, 5);
   }
 
   private async updateRtHash(userId: number, rt: string) {
     const hash = await this.hashData(rt);
-    await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        hashedRt: hash,
-      },
-    });
+    await this.userRepository.save({ id: userId, hashedRt: hash });
   }
 }

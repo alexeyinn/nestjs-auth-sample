@@ -2,21 +2,16 @@ import {
   Body,
   Controller,
   HttpCode,
-  HttpException,
   HttpStatus,
   Post,
-  Req,
   UseGuards,
 } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { ApiCreatedResponse, ApiHeader, ApiOkResponse } from "@nestjs/swagger";
-import { Request } from "express";
+import { ApiCreatedResponse, ApiHeader } from "@nestjs/swagger";
 import { GetCurrentUser, GetCurrentUserId } from "src/common/decorators";
 import { Public } from "src/common/decorators/public.decorators";
 import { AtGuard, RtGuard } from "src/common/guards";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
-import { UserEntity } from "./entities";
 import { Tokens } from "./types/tokens.type";
 
 @Controller("auth")

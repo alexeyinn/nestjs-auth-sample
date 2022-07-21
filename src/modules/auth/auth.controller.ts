@@ -26,14 +26,14 @@ export class AuthController {
     return this.authService.sighupLocal(dto);
   }
 
-  // @Public()
-  // @Post("local/signin")
-  // @ApiCreatedResponse({ type: Tokens })
-  // @ApiHeader({ name: "Authorization", description: "Access token" })
-  // @HttpCode(HttpStatus.OK)
-  // sighinLocal(@Body() dto: AuthDto): Promise<Tokens> {
-  //   return this.authService.sighinLocal(dto);
-  // }
+  @Public()
+  @Post("local/signin")
+  @ApiCreatedResponse({ type: Tokens })
+  @ApiHeader({ name: "Authorization", description: "Access token" })
+  @HttpCode(HttpStatus.OK)
+  sighinLocal(@Body() dto: AuthDto): Promise<Tokens> {
+    return this.authService.sighinLocal(dto);
+  }
 
   // @UseGuards(AtGuard)
   // @Post("logout")

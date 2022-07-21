@@ -27,10 +27,7 @@ export class AuthService {
     try {
       newUser = await this.userRepository.save({ ...dto, hash });
     } catch {
-      throw new HttpException(
-        "Пользователь с таким email, уже существует!",
-        HttpStatus.FORBIDDEN
-      );
+      throw new ForbiddenException("This email is already taken!");
     }
 
     const tokens = await this.getTokens(newUser.id, newUser.email);
@@ -39,23 +36,21 @@ export class AuthService {
     return tokens;
   }
 
-  // async sighinLocal(dto: AuthDto): Promise<Tokens> {
-  //   const user = await this.prisma.user.findFirst({
-  //     where: {
-  //       email: dto.email,
-  //     },
-  //   });
+  async sighinLocal(dto: AuthDto): Promise<Tokens> {
+    const user = await this.userRepository.findOne({
+      where: { email: dto.email },
+    });
 
-  //   if (!user)
-  //     throw new ForbiddenException("User with this email is not exist!");
+    if (!user)
+      throw new ForbiddenException("User with this email is not exist!");
 
-  //   const passwordMatches = await bcrypt.compare(dto.password, user.hash);
-  //   if (!passwordMatches) throw new ForbiddenException("Wrong password!");
+    const passwordMatches = await bcrypt.compare(dto.password, user.hash);
+    if (!passwordMatches) throw new ForbiddenException("Wrong password!");
 
-  //   const tokens = await this.getTokens(user.id, user.email);
-  //   await this.updateRtHash(user.id, tokens.refresh_token);
-  //   return tokens;
-  // }
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+    return tokens;
+  }
 
   // async logout(userId: number): Promise<boolean> {
   //   await this.prisma.user.updateMany({

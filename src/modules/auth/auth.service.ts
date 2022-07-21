@@ -1,9 +1,13 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Tokens } from "./types/tokens.type";
 import * as bcrypt from "bcrypt";
 import { AuthDto } from "./dto";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "./entities";
 import { Repository } from "typeorm";
@@ -19,7 +23,15 @@ export class AuthService {
   async sighupLocal(dto: AuthDto): Promise<Tokens> {
     const hash = await this.hashData(dto.password);
 
-    const newUser = await this.userRepository.save({ ...dto, hash });
+    let newUser;
+    try {
+      newUser = await this.userRepository.save({ ...dto, hash });
+    } catch {
+      throw new HttpException(
+        "Пользователь с таким email, уже существует!",
+        HttpStatus.FORBIDDEN
+      );
+    }
 
     const tokens = await this.getTokens(newUser.id, newUser.email);
     await this.updateRtHash(newUser.id, tokens.refresh_token);

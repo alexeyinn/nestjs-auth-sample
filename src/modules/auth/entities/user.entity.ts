@@ -7,7 +7,7 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   @ApiProperty()
   email: string;
 

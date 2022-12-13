@@ -1,29 +1,42 @@
-import { Module } from "@nestjs/common";
-import { APP_GUARD } from "@nestjs/core";
-import { AuthModule } from "./modules/auth/auth.module";
-import { AtGuard } from "./common/guards";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserEntity } from "./modules/auth/entities";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './modules/auth/auth.module';
+import { BaseModule } from './modules/base/base.module';
+import { TypeOrmConfigService } from './common/config/typeorm.config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
+import * as dotenv from 'dotenv';
+
+dotenv.config({
+  path: `./src/common/config/env/.${process.env.NODE_ENV.trim()}.env`,
+});
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "postgres",
-      password: "admin",
-      database: "tokens",
-      entities: [UserEntity],
-      synchronize: true,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      signOptions: {
+        expiresIn: 3600,
+      },
+    }),
+    TypeOrmModule.forRootAsync(TypeOrmConfigService()),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      include: [AuthModule, BaseModule],
+      autoSchemaFile: 'schema.gql',
+      sortSchema: true,
+      playground: process.env.GRAPH_PLAYGROUND === 'true' ? true : false,
+      context: ({ req }) => ({ req }),
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `./src/common/config/env/.${process.env.NODE_ENV}.env`,
     }),
     AuthModule,
-  ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AtGuard,
-    },
+    BaseModule,
   ],
 })
 export class AppModule {}

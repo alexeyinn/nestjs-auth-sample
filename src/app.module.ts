@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
-import { BaseModule } from './modules/base/base.module';
 import { TypeOrmConfigService } from './common/config/typeorm.config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -25,7 +24,7 @@ dotenv.config({
     TypeOrmModule.forRootAsync(TypeOrmConfigService()),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      include: [AuthModule, BaseModule],
+      include: [AuthModule],
       autoSchemaFile: 'schema.gql',
       sortSchema: true,
       playground: process.env.GRAPH_PLAYGROUND === 'true' ? true : false,
@@ -36,7 +35,6 @@ dotenv.config({
       envFilePath: `./src/common/config/env/.${process.env.NODE_ENV}.env`,
     }),
     AuthModule,
-    BaseModule,
   ],
 })
 export class AppModule {}

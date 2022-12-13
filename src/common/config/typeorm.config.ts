@@ -2,7 +2,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { RoleEntity } from 'src/modules/auth/entities/role.entity';
 import { UserEntity } from 'src/modules/auth/entities/user.entity';
-import { BaseEntity } from '../../modules/base/entities';
 
 export const TypeOrmConfigService = (): TypeOrmModuleAsyncOptions => ({
   useFactory: (configService: ConfigService) => ({
@@ -12,7 +11,7 @@ export const TypeOrmConfigService = (): TypeOrmModuleAsyncOptions => ({
     username: 'postgres',
     password: configService.get('POSTGRES_PASSWORD'),
     database: 'chem_reagent',
-    entities: [UserEntity, RoleEntity, BaseEntity],
+    entities: [UserEntity, RoleEntity],
     synchronize:
       configService.get('POSTGRES_SYNCHRONIZE') === 'true' ? true : false,
   }),

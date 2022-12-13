@@ -1,5 +1,4 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { BaseEntity } from 'src/modules/base/entities';
 import { UserEntity } from 'src/modules/auth/entities/user.entity';
 import { RoleEntity } from 'src/modules/auth/entities/role.entity';
 import * as dotenv from 'dotenv';
@@ -15,7 +14,7 @@ const Config: DataSourceOptions = {
   username: 'postgres',
   password: process.env.POSTGRES_PASSWORD,
   database: 'chem_reagent',
-  entities: [UserEntity, RoleEntity, BaseEntity],
+  entities: [UserEntity, RoleEntity],
   synchronize: process.env.POSTGRES_SYNCHRONIZE === 'true' ? true : false,
   migrations: ['src/migrations/*{.ts,.js}'],
 };

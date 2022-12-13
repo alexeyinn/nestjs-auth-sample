@@ -6,29 +6,6 @@ type AccessTokenType {
   access_token: String!
 }
 
-type BaseEntity {
-  amount: Float!
-  arrivalDate: DateTime!
-  batchNumber: String!
-  comment: String!
-  dateOfManufacture: DateTime!
-  expiryDate: DateTime!
-  id: ID!
-  invoice: String!
-  manufacturer: String!
-  name: String!
-  provider: String!
-  reagentPurity: String!
-  reagentUnit: String!
-  standard: String!
-  warningPeriod: String!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 input EditUserInput {
   department: String!
   email: String!
@@ -56,16 +33,12 @@ type Mutation {
   logout: Boolean!
   refreshTokens: AccessTokenType!
   removeAvatar: Boolean!
-  removeOneReagent(id: Int!): Float!
   signIn(signInInput: SignInInput!): AccessTokenType!
   signUp(signUpInput: SignUpInput!): AccessTokenType!
-  updateBase(updateBaseInput: UpdateBaseInput!): BaseEntity!
   uploadAvatar(file: Upload!): String!
 }
 
 type Query {
-  getAllReagents: [BaseEntity!]!
-  getOneReagent(id: Int!): BaseEntity!
   getUser: GetUserType!
 }
 
@@ -84,24 +57,6 @@ input SignUpInput {
   phone: String!
   position: String!
   role: String!
-}
-
-input UpdateBaseInput {
-  amount: Float!
-  arrivalDate: DateTime!
-  batchNumber: String!
-  comment: String
-  dateOfManufacture: DateTime!
-  expiryDate: DateTime!
-  id: Int!
-  invoice: String!
-  manufacturer: String!
-  name: String!
-  provider: String!
-  reagentPurity: String!
-  reagentUnit: String!
-  standard: String!
-  warningPeriod: String!
 }
 
 """The `Upload` scalar type represents a file upload."""

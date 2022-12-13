@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  api:
+    container_name: 'auth-sample-back'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: src/common/config/env/.production.env
+    restart: always
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: 'auth-sample-db'
+    image: postgres:12.12-alpine
+    restart: always
+    env_file: src/common/config/env/.production.env
+    environment:
+      NODE_ENV: developer

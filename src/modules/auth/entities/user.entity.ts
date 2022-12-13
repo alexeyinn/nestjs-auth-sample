@@ -1,21 +1,55 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { RoleEntity } from './role.entity';
 
-@Entity("users")
+@ObjectType()
+@Entity('user')
 export class UserEntity {
-  @ApiProperty()
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true })
-  @ApiProperty()
+  @Field()
   email: string;
 
   @Column()
-  @ApiProperty()
+  @Field()
+  firstName: string;
+
+  @Column()
+  @Field()
+  lastName: string;
+
+  @Column()
+  @Field()
+  patronymic: string;
+
+  @Column()
+  @Field()
+  department: string;
+
+  @Column()
+  @Field()
+  position: string;
+
+  @Column()
+  @Field()
+  phone: string;
+
+  @Column({ nullable: true })
+  @Field()
+  photo: string;
+
+  @Column()
+  @Field()
   hash: string;
 
   @Column({ nullable: true })
-  @ApiProperty()
+  @Field()
   hashedRt: string;
+
+  @Field(() => [Number])
+  @ManyToOne(() => RoleEntity, (role) => role.user)
+  role: RoleEntity;
 }

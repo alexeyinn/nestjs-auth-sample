@@ -1,8 +1,6 @@
 # compiled output
 /dist
 /node_modules
-.env
-docker-compose.yml
 
 # Logs
 logs
@@ -35,3 +33,6 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+/src/common/config/env/.developer.env
+/src/common/config/env/.production.env

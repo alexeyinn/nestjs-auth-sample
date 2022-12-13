@@ -1,0 +1,63 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AccessTokenType {
+  access_token: String!
+}
+
+input EditUserInput {
+  department: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  patronymic: String!
+  phone: String!
+  position: String!
+}
+
+type GetUserType {
+  department: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  patronymic: String!
+  photo: String!
+  position: String!
+  role: String!
+}
+
+type Mutation {
+  editUser(editUserInput: EditUserInput!): GetUserType!
+  logout: Boolean!
+  refreshTokens: AccessTokenType!
+  removeAvatar: Boolean!
+  signIn(signInInput: SignInInput!): AccessTokenType!
+  signUp(signUpInput: SignUpInput!): AccessTokenType!
+  uploadAvatar(file: Upload!): String!
+}
+
+type Query {
+  getUser: GetUserType!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+input SignUpInput {
+  department: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  patronymic: String!
+  phone: String!
+  position: String!
+  role: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
